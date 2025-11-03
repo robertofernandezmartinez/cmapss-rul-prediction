@@ -4,7 +4,7 @@ Source: https://data.nasa.gov/dataset/cmapss-jet-engine-simulated-data
 
 ### 📘 Project Overview
 
-- This project predicts the **Remaining Useful Life (RUL)** of aircraft engines using NASA’s CMAPSS dataset.
+- This machine learning project predicts the **Remaining Useful Life (RUL)** of aircraft engines using NASA’s CMAPSS dataset.
 - The goal is to estimate **how many operating cycles each engine has left before failure**, based on its sensor readings.
 - The workflow follows a complete supervised regression pipeline — from preprocessing to production-ready inference.
 
