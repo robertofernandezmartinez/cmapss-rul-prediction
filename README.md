@@ -1,4 +1,4 @@
-# 🧭 Remaining Useful Life (RUL) Prediction (CMAPSS)
+# 🧭 Remaining Useful Life (RUL) Prediction - CMAPSS Jet Engine Simulated Data
 
 Source: https://data.nasa.gov/dataset/cmapss-jet-engine-simulated-data
 
