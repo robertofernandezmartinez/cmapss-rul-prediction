@@ -21,6 +21,8 @@ def load_model():
 @st.cache_data
 def load_data():
     df = pd.read_csv("05_Results/predictions_validation_FD001.csv")
+    st.write("📋 DataFrame columns:")
+    st.write(df.columns)
     return df
 
 model = load_model()
