@@ -1,49 +1,35 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
-import cloudpickle
-import shap
-import matplotlib.pyplot as plt
-import plotly.express as px
 
-# Title
+st.set_page_config(page_title="Remaining Useful Life (RUL) - CMAPSS", layout="centered")
+
 st.title("🚀 Remaining Useful Life (RUL) Prediction - CMAPSS")
+st.markdown("""
+Interactive visualization of a predictive model trained on CMAPSS (NASA) engine data.
 
-st.write("Interactive visualization of a predictive model trained on CMAPSS (NASA) engine data.")
-st.write("Select an engine unit to analyze its status and RUL estimation.")
+Select an engine unit to analyze its status and RUL estimation.
+""")
 
-@st.cache_resource
-def load_model():
-    with open("04_Models/pipe_execution.pickle", "rb") as f:
-        model = cloudpickle.load(f)
-    return model
+# Load prediction data
+DATA_PATH = "05_Results/predictions_validation_FD001.csv"
+df = pd.read_csv(DATA_PATH)
 
-@st.cache_data
-def load_data():
-    df = pd.read_csv("05_Results/predictions_validation_FD001.csv")
-    st.write("📋 DataFrame columns:")
-    st.write(df.columns)
-    return df
+# Check available columns
+st.subheader("📋 DataFrame columns:")
+st.write(df.columns)
 
-model = load_model()
-df = load_data()
+# Confirm expected columns exist
+if 'unit_number' not in df.columns or 'Predicted_RUL' not in df.columns:
+    st.error("❌ 'unit_number' or 'Predicted_RUL' column not found in the CSV.")
+    st.stop()
 
-# Engine selector
+# Select engine unit
 engine_ids = df['unit_number'].unique()
-selected_engine = st.selectbox("Select Engine Unit:", engine_ids)
+selected_engine = st.selectbox("Select engine unit:", engine_ids)
 
-# Filter data
-engine_data = df[df['unit_number'] == selected_engine]
+# Filter dataframe
+filtered_df = df[df['unit_number'] == selected_engine]
 
-# Plot RUL over time
-fig = px.line(engine_data, x='time_cycles', y='RUL', title=f"RUL over Time - Engine {selected_engine}")
-st.plotly_chart(fig)
-
-# SHAP explanation (optional)
-st.subheader("Model Explanation with SHAP")
-if st.checkbox("Show SHAP Explanation"):
-    explainer = shap.Explainer(model.named_steps['regressor'])  # Assuming pipeline
-    shap_values = explainer(engine_data.drop(columns=['RUL', 'unit_number']))
-    st.set_option('deprecation.showPyplotGlobalUse', False)
-    shap.summary_plot(shap_values, engine_data.drop(columns=['RUL', 'unit_number']))
-    st.pyplot()
+# Show predictions
+st.subheader("📉 Predicted RUL for selected unit:")
+st.line_chart(filtered_df[['Predicted_RUL']].reset_index(drop=True))
