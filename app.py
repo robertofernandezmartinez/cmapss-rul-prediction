@@ -31,7 +31,7 @@ st.subheader("📉 Predicted RUL for selected unit:")
 st.line_chart(filtered_df[['predicted_RUL']].reset_index(drop=True))
 
 # 🔔 Maintenance alert based on threshold
-if filtered_df['Predicted_RUL'].min() < 20:
+if filtered_df['predicted_RUL'].min() < 20:
     st.warning("⚠️ Maintenance recommended soon: Predicted RUL drops below 20 cycles.")
 else:
     st.success("✅ No immediate maintenance required.")
