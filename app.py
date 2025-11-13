@@ -14,10 +14,6 @@ Select an engine unit to analyze its status and RUL estimation.
 DATA_PATH = "05_Results/predictions_validation_FD001.csv"
 df = pd.read_csv(DATA_PATH)
 
-# Check available columns
-st.subheader("📋 DataFrame columns:")
-st.write(df.columns)
-
 # Confirm expected columns exist (fixed lowercase!)
 if 'unit_number' not in df.columns or 'predicted_RUL' not in df.columns:
     st.error("❌ 'unit_number' or 'predicted_RUL' column not found in the CSV.")
