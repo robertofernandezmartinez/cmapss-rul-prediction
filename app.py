@@ -16,8 +16,8 @@ DATA_PATH = "05_Results/predictions_validation_FD001.csv"
 df = pd.read_csv(DATA_PATH)
 
 # Confirm expected columns exist
-if 'unit_number' not in df.columns or 'Predicted_RUL' not in df.columns:
-    st.error("❌ 'unit_number' or 'Predicted_RUL' column not found in the CSV.")
+if 'unit_number' not in df.columns or 'predicted_rul' not in df.columns:
+    st.error("❌ 'unit_number' or 'predicted_rul' column not found in the CSV.")
     st.stop()
 
 # Select engine unit
@@ -34,7 +34,7 @@ rul_critical = 20
 # Create the Altair chart
 line = alt.Chart(filtered_df.reset_index()).mark_line().encode(
     x=alt.X('index:Q', title='Cycle'),
-    y=alt.Y('Predicted_RUL:Q', title='Predicted RUL')
+    y=alt.Y('predicted_rul:Q', title='Predicted RUL')
 ).properties(
     width=700,
     height=400,
@@ -49,7 +49,7 @@ rule_critical = alt.Chart(pd.DataFrame({'y': [rul_critical]})).mark_rule(color='
 st.altair_chart(line + rule_warning + rule_critical, use_container_width=True)
 
 # Optional alert text
-min_rul = filtered_df['Predicted_RUL'].min()
+min_rul = filtered_df['predicted_rul'].min()
 if min_rul < rul_critical:
     st.error("🔴 CRITICAL: Predicted RUL dropped below 20 cycles. Immediate maintenance required.")
 elif min_rul < rul_warning:
