@@ -13,7 +13,6 @@ Source: https://data.nasa.gov/dataset/cmapss-jet-engine-simulated-data
 
 The CMAPSS dataset contains four subsets (FD001–FD004) of increasing complexity.  
 This project uses **FD001**, which includes a single operating condition and one fault mode.  
-
 Focusing on FD001 provides a controlled environment to develop and validate the RUL prediction pipeline.  
 It minimizes variability from different flight regimes or multiple fault types, allowing for:  
 - a clearer understanding of degradation patterns,  
@@ -84,11 +83,11 @@ It is designed for engineers, analysts, or decision‑makers who need a quick wa
 - Engine Selector: choose any engine unit from the validation set.
 - Interactive RUL Plot: scroll, hover, zoom, and inspect exact cycle/RUL values.
 - Maintenance Thresholds:
--- 🟧 Warning zone below 80 cycles,
--- 🟥 Critical zone below 50 cycles.
+🟧 Warning zone below 80 cycles,
+🟥 Critical zone below 50 cycles.
 
 ### 📁 Files Used by the Dashboard
 
-- app.py — Streamlit application code.
-- 05_Results/predictions_validation_FD001.csv — Predictions used for visualization created on the notebook `08_execution:code.ipynb`
-- requirements.txt → List of Python dependencies required to run the app (e.g., streamlit, pandas, plotly)
+- `app.py` — Streamlit application code.
+- `05_Results/predictions_validation_FD001.csv` — Predictions used for visualization created on the notebook `08_execution:code.ipynb`
+- `requirements.txt` → List of Python dependencies required to run the app (streamlit, pandas, plotly...)
