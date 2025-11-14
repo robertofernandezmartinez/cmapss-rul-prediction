@@ -2,14 +2,14 @@
 
 Source: https://data.nasa.gov/dataset/cmapss-jet-engine-simulated-data
 
-### 📘 Project Overview
+## 📘 Project Overview
 
 - This machine learning project predicts the **Remaining Useful Life (RUL)** of aircraft engines using NASA’s CMAPSS dataset.
 - The goal is to estimate **how many operating cycles each engine has left before failure**, based on its sensor readings.
 - The workflow follows a complete supervised regression pipeline, from preprocessing to production-ready inference.
 
 
-### 🎯 This Project Focuses on FD001
+## 🎯 This Project Focuses on FD001
 
 The CMAPSS dataset contains four subsets (FD001–FD004) of increasing complexity.  
 This project uses **FD001**, which includes a single operating condition and one fault mode.  
@@ -21,7 +21,7 @@ It minimizes variability from different flight regimes or multiple fault types, 
 - a solid performance baseline before extending to more complex scenarios (FD002–FD004).  
 
 
-### ⚙️ Workflow Summary  
+## ⚙️ Workflow Summary  
 
 1. **Data Preparation & Quality**  
    - Cleaned raw CMAPSS data (train/test sets).  
@@ -51,7 +51,7 @@ It minimizes variability from different flight regimes or multiple fault types, 
    - Exported results to `/05_Results/predictions_validation_FD001.csv` just to check.
 
 
-### 🧩 Notebooks  
+## 🧩 Notebooks  
 
 | # | Notebook | Description |
 |---|-----------|-------------|
@@ -62,11 +62,33 @@ It minimizes variability from different flight regimes or multiple fault types, 
 | 5 | `05_feature_selection.ipynb` | Feature selection and ranking using MI, RFE, and PI methods. |
 | 6 | `06_modeling.ipynb` | Regression model training, tuning, and evaluation using cross-validation. |
 | 7 | `07_retraining_code.ipynb` | Final retraining using the optimal model and best hyperparameters. |
-| 8 | `08_execution:code.ipynb` | Production inference: predicting Remaining Useful Life (RUL) on validation or new data. |
+| 8 | `08_execution_code.ipynb` | Production inference: predicting Remaining Useful Life (RUL) on validation or new data. |
 
 
-### 📊 Key Metrics (FD001)
+## 📊 Key Metrics (FD001)
 
 - MAE: 30.8 - Average prediction error ≈ 30 cycles - Not perfect but acceptable for FD001.
 - RMSE: 44.0 - Moderate error dispersion - Model generalizes well.
 - R²:	0.62	- Explains ~62 % of RUL variance - Strong predictive signal.
+
+
+## 📊 Streamlit Web App – Remaining Useful Life (RUL) Prediction
+
+This project includes an interactive Streamlit dashboard that visualizes the predicted Remaining Useful Life (RUL) for each engine unit in the NASA CMAPSS FD001 dataset.
+It is designed for engineers, analysts, or decision‑makers who need a quick way to assess engine health and upcoming maintenance needs.
+
+### 🔗 Try the App Online: https://cmapss-rul-prediction.streamlit.app/
+
+### 📊 Dashboard Features
+
+- Engine Selector: choose any engine unit from the validation set.
+- Interactive RUL Plot: scroll, hover, zoom, and inspect exact cycle/RUL values.
+- Maintenance Thresholds:
+-- 🟧 Warning zone below 80 cycles,
+-- 🟥 Critical zone below 50 cycles.
+
+### 📁 Files Used by the Dashboard
+
+- app.py — Streamlit application code.
+- 05_Results/predictions_validation_FD001.csv — Predictions used for visualization created on the notebook `08_execution:code.ipynb`
+- requirements.txt → List of Python dependencies required to run the app (e.g., streamlit, pandas, plotly)
