@@ -1,50 +1,85 @@
 import streamlit as st
 import pandas as pd
+import plotly.graph_objects as go
 
-st.set_page_config(page_title="Remaining Useful Life (RUL) - CMAPSS", layout="centered")
+st.set_page_config(page_title="Remaining Useful Life (RUL) - CMAPSS", layout="wide")
 
 st.title("🚀 Remaining Useful Life (RUL) Prediction - CMAPSS")
 st.markdown("""
 Interactive visualization of a predictive model trained on CMAPSS (NASA) engine data.
 
-Select an engine unit to analyze its status and RUL estimation.
+Select an engine unit to analyze its status and predicted Remaining Useful Life (RUL).
 """)
 
-# Load data
+# Load prediction data
 DATA_PATH = "05_Results/predictions_validation_FD001.csv"
 df = pd.read_csv(DATA_PATH)
 
-# Validate expected columns
-required_cols = ['unit_number', 'time_in_cycles', 'predicted_RUL']
-missing = [c for c in required_cols if c not in df.columns]
-
-if missing:
-    st.error(f"❌ Missing columns in CSV: {missing}")
+# Validate column names
+expected_cols = ["unit_number", "time_in_cycles", "predicted_RUL"]
+if not all(col in df.columns for col in expected_cols):
+    st.error(f"❌ CSV file must contain columns: {expected_cols}")
     st.stop()
 
-# Engine selection
-engine_ids = df['unit_number'].unique()
+# Engine selector
+engine_ids = df["unit_number"].unique()
 selected_engine = st.selectbox("Select engine unit:", engine_ids)
 
-# Filter selected engine
-filtered_df = df[df['unit_number'] == selected_engine].sort_values("time_in_cycles")
+# Filter data
+filtered_df = df[df["unit_number"] == selected_engine]
 
-# --- INTERACTIVE PLOT (NOT STATIC) ---
-st.subheader("📉 Predicted RUL for selected unit:")
+# Thresholds
+WARNING = 80
+CRITICAL = 50
 
-# Build an interactive dataframe for plotting
-plot_df = filtered_df[["time_in_cycles", "predicted_RUL"]].rename(
-    columns={"time_in_cycles": "Cycle", "predicted_RUL": "Predicted RUL"}
+# Create graph
+fig = go.Figure()
+
+# Predicted RUL curve
+fig.add_trace(go.Scatter(
+    x=filtered_df["time_in_cycles"],
+    y=filtered_df["predicted_RUL"],
+    mode="lines",
+    name="Predicted RUL",
+    line=dict(color="lightblue", width=3)
+))
+
+# Yellow warning line
+fig.add_hline(
+    y=WARNING,
+    line_dash="dash",
+    line_color="yellow",
+    annotation_text=f"Warning ({WARNING})",
+    annotation_position="top right"
 )
 
-# Add threshold helper columns so Streamlit will draw them as flat lines
-plot_df["Warning (30)"] = 30
-plot_df["Critical (20)"] = 20
+# Red critical line
+fig.add_hline(
+    y=CRITICAL,
+    line_dash="dash",
+    line_color="red",
+    annotation_text=f"Critical ({CRITICAL})",
+    annotation_position="bottom right"
+)
 
-st.line_chart(plot_df, x="Cycle", y=["Predicted RUL", "Warning (30)", "Critical (20)"])
+# Layout adjustments → taller plot, clearer axes
+fig.update_layout(
+    height=650,  # ← makes the chart taller
+    yaxis=dict(title="RUL (Remaining Useful Life)", range=[0, max(filtered_df["predicted_RUL"]) + 20]),
+    xaxis=dict(title="Cycle"),
+    title=f"Predicted RUL for Engine {selected_engine}",
+    template="plotly_dark",
+    showlegend=True
+)
 
-# --- Maintenance alert ---
-if filtered_df['predicted_RUL'].min() < 20:
-    st.warning("⚠️ Maintenance recommended soon: Predicted RUL drops below 20 cycles.")
-elif filtered_df['predicted_RUL'].min() < 30:
-    st.warning("⚠️ RUL below warning threshold (30). Plan maintenance soon.")
+st.plotly_chart(fig, use_container_width=True)
+
+# Alerts
+lowest_rul = filtered_df["predicted_RUL"].min()
+
+if lowest_rul < CRITICAL:
+    st.error("🛑 **CRITICAL: RUL below 50 cycles. Immediate maintenance required.**")
+elif lowest_rul < WARNING:
+    st.warning("⚠️ **Warning: RUL below 80 cycles. Prepare maintenance.**")
+else:
+    st.success("✅ Engine condition stable. No maintenance required yet.")
