@@ -89,5 +89,5 @@ It is designed for engineers, analysts, or decision‑makers who need a quick wa
 ### 📁 Files Used by the Dashboard
 
 - `app.py` — Streamlit application code.
-- `05_Results/predictions_validation_FD001.csv` — Predictions used for visualization created on the notebook `08_execution:code.ipynb`
+- `05_Results/predictions_validation_FD001.csv` — Predictions used for visualization created on the notebook `08_execution_code.ipynb`
 - `requirements.txt` → List of Python dependencies required to run the app (streamlit, pandas, plotly...)
