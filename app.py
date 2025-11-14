@@ -66,8 +66,10 @@ fig.add_trace(go.Scatter(
     y=filtered_df["predicted_RUL"],
     mode="lines",
     name="Predicted RUL",
-    line=dict(color="lightblue", width=3)
+    line=dict(color="lightblue", width=3),
+    hovertemplate='Cycle: %{x}<br>RUL: %{y:.2f}<extra></extra>'
 ))
+
 
 # Add warning and critical lines
 fig.add_hline(
