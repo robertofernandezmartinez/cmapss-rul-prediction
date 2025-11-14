@@ -60,8 +60,9 @@ It minimizes variability from different flight regimes or multiple fault types, 
 | 4 | `04_feature_engineering.ipynb` | Feature transformations: scaling, normalization, Yeo–Johnson, and Quantile transformations. |
 | 5 | `05_feature_selection.ipynb` | Feature selection and ranking using MI, RFE, and PI methods. |
 | 6 | `06_modeling.ipynb` | Regression model training, tuning, and evaluation using cross-validation. |
-| 7 | `07_retraining_code.ipynb` | Final retraining using the optimal model and best hyperparameters. |
-| 8 | `08_execution_code.ipynb` | Production inference: predicting Remaining Useful Life (RUL) on validation or new data. |
+| 7 | `07_preparation_of_production_code.ipynb` | Prepare the final, production-ready pipeline for the RUL prediction model. |
+| 8 | `08_retraining_code.ipynb` | Final retraining using the optimal model and best hyperparameters. |
+| 9 | `09_execution_code.ipynb` | Production inference: predicting Remaining Useful Life (RUL) on validation or new data. |
 
 
 ## 📊 Key Metrics (FD001)
