@@ -73,7 +73,7 @@ fig.add_trace(go.Scatter(
 fig.add_hline(
     y=WARNING,
     line_dash="dash",
-    line_color="yellow",
+    line_color="orange",
     annotation_text=f"Warning ({WARNING})",
     annotation_position="top right"
 )
