@@ -1,6 +1,6 @@
 # 🧭 Remaining Useful Life (RUL) Prediction - CMAPSS Jet Engine Simulated Data
 
-Source: https://data.nasa.gov/dataset/cmapss-jet-engine-simulated-data
+Source: [NASA Prognostics Data Repository](https://data.nasa.gov/dataset/cmapss-jet-engine-simulated-data)
 
 ## 📘 Project Overview
 
@@ -8,87 +8,78 @@ Source: https://data.nasa.gov/dataset/cmapss-jet-engine-simulated-data
 - The goal is to estimate **how many operating cycles each engine has left before failure**, based on its sensor readings.
 - The workflow follows a complete supervised regression pipeline, from preprocessing to production-ready inference.
 
+## 📊 Streamlit Web App – Remaining Useful Life (RUL) Prediction
+
+This project includes an interactive Streamlit dashboard that visualizes the predicted Remaining Useful Life (RUL) for each engine unit in the NASA CMAPSS FD001 dataset. It is designed for engineers, analysts, or decision‑makers who need a quick way to assess engine health and upcoming maintenance needs.
+
+### 🔗 Try the App Online: [https://cmapss-rul-prediction.streamlit.app/](https://cmapss-rul-prediction.streamlit.app/)
+
+## 🛠️ Tech Stack & Environment
+- **Python 3.13+**
+- **Libraries**: `Pandas 3.0.1`, `NumPy 1.26.4` (stability-optimized), `Scikit-Learn 1.8.0`, `XGBoost 3.2.0`, `Plotly`, and `Streamlit`.
+- **Serialization**: `cloudpickle` for cross-version pipeline compatibility.
 
 ## 🎯 This Project Focuses on FD001
 
 The CMAPSS dataset contains four subsets (FD001–FD004) of increasing complexity.  
-This project uses **FD001**, which includes a single operating condition and one fault mode.  
-Focusing on FD001 provides a controlled environment to develop and validate the RUL prediction pipeline.  
-It minimizes variability from different flight regimes or multiple fault types, allowing for:  
-- a clearer understanding of degradation patterns,  
-- straightforward feature selection and model comparison, and  
-- a solid performance baseline before extending to more complex scenarios (FD002–FD004).  
-
+This project uses **FD001**, which includes a single operating condition and one fault mode. Focusing on FD001 provides a controlled environment to develop and validate the RUL prediction pipeline, allowing for:  
+- A clearer understanding of degradation patterns.  
+- Straightforward feature selection and model comparison.  
+- A solid performance baseline before extending to more complex scenarios (FD002–FD004).  
 
 ## ⚙️ Workflow Summary  
 
-1. **Data Preparation & Quality**  
+1. **Data Preparation & Quality**
    - Cleaned raw CMAPSS data (train/test sets).  
-   - Removed duplicates and missing data.  
+   - Handled Pandas 2.0+ whitespace separators using `sep='\s+'`.
    - Renamed and standardized columns (`unit_number`, `time_in_cycles`, `sensors`).  
 
-2. **Feature Engineering & Selection**  
+2. **Feature Engineering & Selection**
    - Applied normalization, Yeo–Johnson and Quantile transformations, and standardization.  
-   - Compared three feature-selection methods:  
-     - Mutual Information (MI)  
-     - Recursive Feature Elimination (RFE)  
-     - Permutation Importance (PI)  
-   - Chose **Mutual Information** as final method.  
-   - Checked correlations and eliminated redundancy.  
+   - Compared three feature-selection methods: Mutual Information (MI), Recursive Feature Elimination (RFE), and **Permutation Importance (PI)**.  
+   - Identified and eliminated highly correlated features to reduce redundancy.  
 
-3. **Modeling**  
-   - Built regression pipelines using scikit-learn and XGBoost.  
+3. **Modeling**
+   - Built regression pipelines using **Scikit-learn** and **XGBoost**.  
    - Trained and tuned models via `RandomizedSearchCV`.  
    - Evaluated with **MAE**, **RMSE**, and **R²** metrics.  
-   - Selected the best-performing model and saved it as a production pipeline.
-   - Created a retraining code to fit the model again in case conditions change anytime in the future.  
+   - Saved the final trained pipeline using `cloudpickle` for production readiness.  
 
-4. **Execution (Inference)**  
-   - Loaded the trained pipeline with `cloudpickle`.  
-   - Applied it to validation/new data.  
-   - Generated **Predicted RUL** for each unit and cycle.  
-   - Exported results to `/05_Results/predictions_validation_FD001.csv` just to check.
-
+4. **Execution (Inference)**
+   - Loaded the production pipeline to predict RUL on validation/new data.  
+   - Generated Predicted RUL for each unit and cycle.  
+   - Exported results to `/05_Results/predictions_validation_FD001.csv` for dashboarding.
 
 ## 🧩 Notebooks  
 
 | # | Notebook | Description |
 |---|-----------|-------------|
-| 1 | `01_setup.ipynb` | Environment setup, library installation, and folder structure creation. |
-| 2 | `02_data_quality.ipynb` | Data cleaning, renaming, duplicates, and missing values handling. |
-| 3 | `03_eda.ipynb` | Exploratory Data Analysis (EDA): variable distributions, correlations, and initial insights. |
-| 4 | `04_feature_engineering.ipynb` | Feature transformations: scaling, normalization, Yeo–Johnson, and Quantile transformations. |
-| 5 | `05_feature_selection.ipynb` | Feature selection and ranking using MI, RFE, and PI methods. |
-| 6 | `06_modeling.ipynb` | Regression model training, tuning, and evaluation using cross-validation. |
-| 7 | `07_preparation_of_production_code.ipynb` | Prepare the final, production-ready pipeline for the RUL prediction model. |
-| 8 | `08_retraining_script.ipynb` | Final retraining using the optimal model and best hyperparameters. |
-| 9 | `09_execution_script.ipynb` | Production inference: predicting Remaining Useful Life (RUL) on validation or new data. |
-
+| 1 | `01_setup.ipynb` | Environment setup, library installation, and folder structure. |
+| 2 | `02_data_quality.ipynb` | Data cleaning, renaming, and missing values handling. |
+| 3 | `03_eda.ipynb` | EDA: distributions, correlations, and degradation insights. |
+| 4 | `04_feature_engineering.ipynb` | Scaling, normalization, and Yeo–Johnson transformations. |
+| 5 | `05_feature_selection.ipynb` | Feature selection using MI, RFE, and Permutation Importance. |
+| 6 | `06_modeling.ipynb` | Regression model training, tuning, and evaluation. |
+| 7 | `07_preparation_of_production_code.ipynb` | Final pipeline assembly and cloudpickle serialization. |
+| 8 | `08_retraining_script.ipynb` | Automated retraining script for model updates. |
+| 9 | `09_execution_script.ipynb` | Production inference for validation or new sensor data. |
 
 ## 📊 Key Metrics (FD001)
 
-- MAE: 30.8 - Average prediction error ≈ 30 cycles - Not perfect but acceptable for FD001.
-- RMSE: 44.0 - Moderate error dispersion - Model generalizes well.
-- R²:	0.62	- Explains ~62 % of RUL variance - Strong predictive signal.
-
-
-## 📊 Streamlit Web App – Remaining Useful Life (RUL) Prediction
-
-This project includes an interactive Streamlit dashboard that visualizes the predicted Remaining Useful Life (RUL) for each engine unit in the NASA CMAPSS FD001 dataset.
-It is designed for engineers, analysts, or decision‑makers who need a quick way to assess engine health and upcoming maintenance needs.
-
-### 🔗 Try the App Online: https://cmapss-rul-prediction.streamlit.app/
+- **MAE: 30.8** - Average prediction error ≈ 30 cycles.
+- **RMSE: 44.0** - Moderate error dispersion; the model generalizes well.
+- **R²: 0.62** - Explains ~62% of RUL variance.
 
 ### 📊 Dashboard Features
 
-- Engine Selector: choose any engine unit from the validation set.
-- Interactive RUL Plot: scroll, hover, zoom, and inspect exact cycle/RUL values.
-- Maintenance Thresholds:
-🟧 Warning zone below 80 cycles,
-🟥 Critical zone below 50 cycles.
+- **Engine Selector**: Choose any engine unit from the validation set.
+- **Interactive Plotly Chart**: Zoom and inspect exact cycle/RUL values.
+- **Maintenance Thresholds**:
+    - 🟧 **Warning**: Below 80 cycles.
+    - 🟥 **Critical**: Below 50 cycles.
 
 ### 📁 Files Used by the Dashboard
 
-- `app.py` — Streamlit application code.
-- `05_Results/predictions_validation_FD001.csv` — Predictions used for visualization created on the notebook `08_execution_code.ipynb`
-- `requirements.txt` → List of Python dependencies required to run the app (streamlit, pandas, plotly...)
+- `app.py` — Streamlit application code using relative paths for portability.
+- `/05_Results/predictions_validation_FD001.csv` — Predictions generated in notebook **09**.
+- `requirements.txt` — Environment manifest (Streamlit, Plotly, Pandas, etc.).
