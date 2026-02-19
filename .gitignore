@@ -1,30 +1,35 @@
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-venv/
+# Entornos virtuales
 env/
-ENV/
-
-# Jupyter
-.ipynb_checkpoints/
-*.ipynb_checkpoints
-
-# Data
-*.csv
-*.pickle
-*.pkl
-*.h5
-
-# OS
-.DS_Store
-.DS_Store?
-
-# IDEs
-.vscode/
-.idea/
-
-# Environment
+venv/
 .env
+.venv
+
+# Python basura
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Jupyter y VS Code
+.ipynb_checkpoints/
+.vscode/
+.DS_Store
+
+# Archivos de datos pesados (opcional, si no quieres subir los .csv o .txt grandes)
+# 02_Data/01_Raw/*.txt
