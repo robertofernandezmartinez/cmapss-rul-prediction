@@ -1,27 +1,30 @@
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
+import cloudpickle
+import os
 
 # Page config
-st.set_page_config(page_title="Remaining Useful Life (RUL) - CMAPSS", layout="wide")
+st.set_page_config(page_title="RUL Prediction - CMAPSS", layout="wide")
+
+# --- PATH HANDLER ---
+# Get the absolute path of the current directory to avoid "File Not Found" errors
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_PATH = os.path.join(BASE_DIR, "05_Results", "predictions_validation_FD001.csv")
+MODEL_PATH = os.path.join(BASE_DIR, "04_Models", "pipe_execution.pickle")
 
 # Title and intro
 st.title("🚀 Remaining Useful Life (RUL) Prediction - CMAPSS")
 st.markdown("""
 Interactive visualization of a predictive model trained on NASA's CMAPSS engine dataset.
-
-Select an engine unit to explore its predicted Remaining Useful Life (RUL) and identify when maintenance is recommended.
 """)
 
-# Load prediction data
-DATA_PATH = "05_Results/predictions_validation_FD001.csv"
-df = pd.read_csv(DATA_PATH)
-
-# Check required columns
-expected_cols = ["unit_number", "time_in_cycles", "predicted_RUL"]
-if not all(col in df.columns for col in expected_cols):
-    st.error(f"❌ CSV file must contain columns: {expected_cols}")
+# --- LOAD DATA ---
+if not os.path.exists(DATA_PATH):
+    st.error(f"❌ Data file not found at: {DATA_PATH}")
     st.stop()
+
+df = pd.read_csv(DATA_PATH)
 
 # Select engine unit
 engine_ids = df["unit_number"].unique()
@@ -34,9 +37,7 @@ filtered_df = df[df["unit_number"] == selected_engine]
 WARNING = 80
 CRITICAL = 50
 
-# ------------------------------
-# 📌 Maintenance Threshold Info
-# ------------------------------
+# --- MAINTENANCE THRESHOLDS ---
 warning_cycles = filtered_df[filtered_df["predicted_RUL"] < WARNING]["time_in_cycles"]
 critical_cycles = filtered_df[filtered_df["predicted_RUL"] < CRITICAL]["time_in_cycles"]
 
@@ -44,20 +45,19 @@ warning_cycle = int(warning_cycles.iloc[0]) if not warning_cycles.empty else Non
 critical_cycle = int(critical_cycles.iloc[0]) if not critical_cycles.empty else None
 
 st.subheader("📌 Maintenance Thresholds")
+col1, col2 = st.columns(2)
+with col1:
+    if warning_cycle:
+        st.warning(f"Warning zone starts at: **Cycle {warning_cycle}**")
+    else:
+        st.info("Warning zone not reached.")
+with col2:
+    if critical_cycle:
+        st.error(f"Critical zone starts at: **Cycle {critical_cycle}**")
+    else:
+        st.info("Critical zone not reached.")
 
-if warning_cycle:
-    st.markdown(f"🟨 **Warning zone** starts at: **Cycle {warning_cycle}**")
-else:
-    st.markdown("🟨 **Warning zone** not reached for this engine.")
-
-if critical_cycle:
-    st.markdown(f"🟥 **Critical zone** starts at: **Cycle {critical_cycle}**")
-else:
-    st.markdown("🟥 **Critical zone** not reached for this engine.")
-
-# ------------------------------
-# 📈 Plot RUL Over Time
-# ------------------------------
+# --- VISUALIZATION ---
 fig = go.Figure()
 
 # Predicted RUL curve
@@ -66,49 +66,27 @@ fig.add_trace(go.Scatter(
     y=filtered_df["predicted_RUL"],
     mode="lines",
     name="Predicted RUL",
-    line=dict(color="lightblue", width=3),
+    line=dict(color="#00D4FF", width=3),
     hovertemplate='Cycle: %{x}<br>RUL: %{y:.2f}<extra></extra>'
 ))
 
+# Threshold lines
+fig.add_hline(y=WARNING, line_dash="dash", line_color="orange", annotation_text="Warning")
+fig.add_hline(y=CRITICAL, line_dash="dash", line_color="red", annotation_text="Critical")
 
-# Add warning and critical lines
-fig.add_hline(
-    y=WARNING,
-    line_dash="dash",
-    line_color="orange",
-    annotation_text=f"Warning ({WARNING})",
-    annotation_position="top right"
-)
-
-fig.add_hline(
-    y=CRITICAL,
-    line_dash="dash",
-    line_color="red",
-    annotation_text=f"Critical ({CRITICAL})",
-    annotation_position="bottom right"
-)
-
-# Format layout
 fig.update_layout(
-    height=650,
-    yaxis=dict(title="RUL (Remaining Useful Life)", range=[0, max(filtered_df["predicted_RUL"]) + 20]),
-    xaxis=dict(title="Cycle"),
-    title=f"Predicted RUL for Engine {selected_engine}",
-    template="plotly_dark",
-    showlegend=True
+    height=600,
+    title=f"RUL Decay for Engine {selected_engine}",
+    xaxis_title="Cycle",
+    yaxis_title="Remaining Useful Life",
+    template="plotly_dark"
 )
 
-# Show plot
 st.plotly_chart(fig, use_container_width=True)
 
-# ------------------------------
-# 🚨 Status Alert
-# ------------------------------
-lowest_rul = filtered_df["predicted_RUL"].min()
-
-if lowest_rul < CRITICAL:
-    st.error("🛑 **CRITICAL: RUL below 50 cycles. Immediate maintenance required.**")
-elif lowest_rul < WARNING:
-    st.warning("⚠️ **Warning: RUL below 80 cycles. Prepare maintenance.**")
-else:
-    st.success("✅ Engine condition stable. No maintenance required yet.")
+# --- REAL-TIME MODEL STATUS ---
+if st.checkbox("Show Model Info"):
+    if os.path.exists(MODEL_PATH):
+        st.success(f"✅ Active Model Found: {os.path.basename(MODEL_PATH)}")
+    else:
+        st.warning("⚠️ Model pickle not found. Using static CSV data only.")
