@@ -1,8 +1,8 @@
-streamlit>=1.42.0
-pandas>=2.2.3,<3.0.0
-numpy==1.26.4
+streamlit>=1.35.0
+pandas>=2.2.2,<3.0.0
+numpy>=1.26.0,<2.0.0
 scikit-learn==1.6.1
 xgboost==2.1.4
 joblib==1.4.2
-plotly==6.0.0
+plotly
 altair==4.2.2
