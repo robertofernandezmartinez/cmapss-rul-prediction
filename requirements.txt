@@ -1,26 +1,8 @@
-# --- CORE DATA SCIENCE ---
-numpy==1.26.4
+streamlit>=1.42.0
 pandas>=2.2.3,<3.0.0
+numpy==1.26.4
 scikit-learn==1.6.1
 xgboost==2.1.4
-scipy==1.15.2
-
-# --- PREPROCESSING & SERIALIZATION ---
-category_encoders==2.7.0
-imbalanced-learn==0.13.0
 joblib==1.4.2
-cloudpickle==3.1.1
-
-# --- STREAMLIT & VISUALIZATION ---
-streamlit>=1.42.0
-altair==4.2.2
 plotly==6.0.0
-
-# --- API & SERVER (FASTAPI STACK) ---
-fastapi==0.115.8
-uvicorn==0.34.0
-python-multipart==0.0.20
-python-dotenv==1.0.1
-
-# --- DATABASE ---
-supabase==2.13.0
+altair==4.2.2
